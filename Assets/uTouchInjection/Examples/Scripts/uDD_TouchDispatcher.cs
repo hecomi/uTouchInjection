@@ -5,9 +5,12 @@ public class uDD_TouchDispatcher : MonoBehaviour
     private static int currentId = 0;
 
     uTouchInjection.Pointer pointer_;
+    bool isFirstTouch_ = true;
 
     [SerializeField] OVRInput.RawButton touchInputTrigger = OVRInput.RawButton.LIndexTrigger;
     [SerializeField] OVRInput.RawTouch hoverInputTrigger = OVRInput.RawTouch.LIndexTrigger;
+    [SerializeField, Range(0f, 1f)] float filter = 0.8f;
+    [SerializeField] float maxRayDistance = 9999f;
 
     public uDesktopDuplication.Texture.RayCastResult result 
     { 
@@ -33,14 +36,24 @@ public class uDD_TouchDispatcher : MonoBehaviour
         set; 
     }
 
+    public Vector2 filteredPos 
+    { 
+        get; 
+        private set; 
+    }
+
     void GetPointer()
     {
+        if (pointer_ != null) return;
+
         pointer_ = uTouchInjection.Manager.GetPointer(currentId);
         currentId++;
     }
 
     void ReleasePointer()
     {
+        if (pointer_ == null) return;
+
         pointer_.Release();
         pointer_ = null;
         currentId--;
@@ -53,46 +66,88 @@ public class uDD_TouchDispatcher : MonoBehaviour
 
     void Update()
     {
-        UpdateState();
         UpdateTouch();
-    }
-
-    void UpdateState()
-    {
-        switch (state) {
-            case State.Release: {
-                if (OVRInput.Get(hoverInputTrigger)) {
-                    GetPointer();
-                    state = State.Hover;
-                }
-                break;
-            }
-            case State.Hover: {
-                pointer_.Hover();
-                if (OVRInput.Get(touchInputTrigger)) {
-                    state = State.Touch;
-                } else if (!OVRInput.Get(hoverInputTrigger)) {
-                    ReleasePointer();
-                    state = State.Release;
-                }
-                break;
-            }
-            case State.Touch: {
-                pointer_.Touch();
-                if (!OVRInput.Get(touchInputTrigger)) {
-                    state = State.Hover;
-                }
-                break;
-            }
-        }
+        UpdateState();
     }
 
     void UpdateTouch()
     {
-        result = uDesktopDuplication.Texture.RayCastAll(transform.position, transform.forward * 9999f);
+        result = uDesktopDuplication.Texture.RayCastAll(transform.position, transform.forward * maxRayDistance);
 
-        if (result.hit && pointer_ != null) {
-            pointer_.position = result.desktopCoords;
+        if (pointer_ == null) return;
+
+        if (result.hit) {
+            if (isFirstTouch_) {
+                filteredPos = result.desktopCoords;
+                isFirstTouch_ = false;
+            } else {
+                filteredPos += (result.desktopCoords - filteredPos) * (Time.deltaTime * 60) * (1f - filter);
+            }
         }
+
+        pointer_.position = filteredPos;
+    }
+
+    void UpdateState()
+    {
+        if (!result.hit) {
+            ReleasePointer();
+            return;
+        }
+
+        switch (state) {
+            case State.Release: {
+                if (OVRInput.Get(hoverInputTrigger)) {
+                    StartHover();
+                }
+                break;
+            }
+            case State.Hover: {
+                Hover();
+                if (OVRInput.Get(touchInputTrigger)) {
+                    StartTouch();
+                } else if (!OVRInput.Get(hoverInputTrigger)) {
+                    StartRelease();
+                }
+                break;
+            }
+            case State.Touch: {
+                Touch();
+                if (!OVRInput.Get(touchInputTrigger)) {
+                    StartHover();
+                }
+                break;
+            }
+        }
+    }
+
+    void StartRelease()
+    {
+        ReleasePointer();
+        state = State.Release;
+    }
+
+    void StartHover()
+    {
+        GetPointer();
+        state = State.Hover;
+    }
+
+    void StartTouch()
+    {
+        isFirstTouch_ = true;
+        state = State.Touch;
+    }
+
+    void Hover()
+    {
+        GetPointer();
+        pointer_.Hover();
+    }
+
+    void Touch()
+    {
+        GetPointer();
+        pointer_.Touch();
     }
 }
