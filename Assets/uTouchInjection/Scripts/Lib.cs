@@ -27,6 +27,10 @@ public static class Lib
     public static extern void Hover(int id);
     [DllImport("uTouchInjection")]
     public static extern void Release(int id);
+    [DllImport("uTouchInjection")]
+    public static extern void EnableLogOutput();
+    [DllImport("uTouchInjection")]
+    public static extern void DisableLogOutput();
 }
 
 }

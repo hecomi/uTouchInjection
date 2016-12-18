@@ -11,26 +11,39 @@ public:
     using StateFunc = std::function<void()>;
     using StateType = State;
 
-    struct StateFunctions
+    struct StateInfo
     {
         StateFunc onStart;
         StateFunc onUpdate;
         StateFunc onEnd;
-        StateFunctions(StateFunc&& update)
-            : onUpdate(update) {}
-        StateFunctions(StateFunc&& start, StateFunc&& update, StateFunc&& end)
+        std::map<State, State> proxies;
+
+        StateInfo(StateFunc&& start, StateFunc&& update, StateFunc&& end)
             : onStart(start)
             , onUpdate(update)
-            , onEnd(end) {}
+            , onEnd(end) 
+        {
+        }
+
+        StateInfo(StateFunc&& start, StateFunc&& update, StateFunc&& end, std::initializer_list<std::pair<State, State>>&& map)
+            : onStart(start)
+            , onUpdate(update)
+            , onEnd(end) 
+        {
+            for (const auto& proxy : map)
+            {
+                proxies.insert(proxy);
+            }
+        }
     };
 
     StateMachine()
     {
     }
 
-    void Init(State initialState, std::initializer_list<std::pair<State, StateFunctions>> states)
+    void Init(State initialState, std::initializer_list<std::pair<State, StateInfo>> states)
     {
-        currentState_ = nextState_ = initialState;
+        initialState_ = currentState_ = preState_ = nextState_ = initialState;
 
         for (const auto& pair : states)
         {
@@ -46,29 +59,54 @@ public:
             return;
         }
 
-        if (currentState_ != nextState_)
+        auto& state = current->second;
+
+        if (!isStarted)
         {
-            current->second.onEnd();
-            preState_ = currentState_;
-            currentState_ = nextState_;
+            state.onStart();
+            isStarted = true;
         }
-        else if (isNewState)
+        else if (!isUpdated)
         {
-            current->second.onStart();
-            isNewState = false;
+            state.onUpdate();
+            isUpdated = true;
+        }
+        else if (currentState_ != nextState_)
+        {
+            state.onEnd();
+
+            auto it = state.proxies.find(nextState_);
+            if (it != state.proxies.end())
+            {
+                const auto proxyState = it->second;
+                preState_ = currentState_;
+                currentState_ = proxyState;
+            }
+            else
+            {
+                preState_ = currentState_;
+                currentState_ = nextState_;
+            }
+
+            isStarted = false;
+            isUpdated = false;
         }
         else
         {
-            current->second.onUpdate();
+            state.onUpdate();
         }
     }
 
     void SetState(State state)
     {
-        if (nextState_ == state) return;
-
         nextState_ = state;
-        isNewState = true;
+    }
+
+    void Reset()
+    {
+        currentState_ = preState_ = nextState_ = initialState_;
+        isStarted = false;
+        isUpdated = false;
     }
 
     State GetCurrentState() const 
@@ -87,9 +125,11 @@ public:
     }
 
 private:
+    State initialState_ = static_cast<State>(-1);
     State currentState_ = static_cast<State>(-1);
     State preState_ = static_cast<State>(-1);
     State nextState_ = static_cast<State>(-1);
-    std::map<State, StateFunctions> states_;
-    bool isNewState = false;
+    std::map<State, StateInfo> states_;
+    bool isStarted = false;
+    bool isUpdated = false;
 };

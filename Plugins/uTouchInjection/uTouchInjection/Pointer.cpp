@@ -39,16 +39,7 @@ void Pointer::InitializeState()
         {
             [this] 
             { 
-                if (state_.GetPreviousState() != State::Hover)
-                {
-                    SetLastPosition();
-                    SetPointerFlags(PointerFlags::Cancel);
-                }
-                else
-                {
-                    SetPointerFlags(PointerFlags::None);
-
-                 }
+                SetPointerFlags(PointerFlags::None);
             },
             [this] 
             { 
@@ -57,6 +48,9 @@ void Pointer::InitializeState()
             [this] 
             { 
                 /* do nothing */ 
+            },
+            {
+                { State::Touch, State::Hover }
             },
         }
     },
@@ -66,10 +60,12 @@ void Pointer::InitializeState()
             [this] 
             {
                 SetPointerFlags(PointerFlags::HoverStart);
+                RequireUpdate();
             },
             [this] 
             {
                 SetPointerFlags(PointerFlags::HoverMove);
+                RequireUpdate();
             },
             [this] 
             {
@@ -78,6 +74,11 @@ void Pointer::InitializeState()
                     SetLastPosition();
                     SetPointerFlags(PointerFlags::HoverEnd);
                 }
+                else
+                {
+                    SetPointerFlags(PointerFlags::HoverMove);
+                }
+                RequireUpdate();
             },
         }
     },
@@ -87,15 +88,21 @@ void Pointer::InitializeState()
             [this] 
             {
                 SetPointerFlags(PointerFlags::TouchStart);
+                RequireUpdate();
             },
             [this] 
             {
                 SetPointerFlags(PointerFlags::TouchMove);
+                RequireUpdate();
             },
             [this] 
             {
                 SetLastPosition();
                 SetPointerFlags(PointerFlags::TouchEnd);
+                RequireUpdate();
+            },
+            {
+                { State::Release, State::Hover }
             },
         }
     },
@@ -109,7 +116,7 @@ void Pointer::Update()
 
     state_.Update();
 
-    if (contact_.pointerInfo.pointerFlags | POINTER_FLAG_UPDATE)
+    if (static_cast<UINT32>(pointerFlags_) | POINTER_FLAG_UPDATE)
     {
         lastPosition_ = contact_.pointerInfo.ptPixelLocation;
     }
@@ -160,12 +167,14 @@ void Pointer::SetState(State state)
 
 void Pointer::SetPointerFlags(PointerFlags flags)
 {
+    pointerFlags_ = flags;
     contact_.pointerInfo.pointerFlags = static_cast<POINTER_FLAGS>(flags);
+}
 
-    if (flags != PointerFlags::None)
-    {
-        shouldBeUpdated_ = true;
-    }
+
+void Pointer::RequireUpdate()
+{
+    shouldBeUpdated_ = true;
 }
 
 
@@ -184,6 +193,12 @@ void Pointer::Hover()
 void Pointer::Release()
 {
     SetState(State::Release);
+}
+
+
+void Pointer::Invalidate()
+{
+    state_.Reset();
 }
 
 
@@ -214,4 +229,31 @@ bool Pointer::IsReleasing() const
 const POINTER_TOUCH_INFO& Pointer::GetData() const
 {
     return contact_;
+}
+
+
+void Pointer::PrintDebugInfo() const
+{
+    const auto& info = contact_.pointerInfo;
+    const auto flags = info.pointerFlags;
+    Debug::Log("\n",
+        "\tID            : ", info.pointerId, "\n",
+        "\tCurrentState  : ", static_cast<int>(state_.GetCurrentState()), "\n",
+        "\tPreviousState : ", static_cast<int>(state_.GetPreviousState()), "\n",
+        "\tNextState     : ", static_cast<int>(state_.GetNextState()), "\n",
+        "\tX             : ", contact_.pointerInfo.ptPixelLocation.x, "\n",
+        "\tY             : ", contact_.pointerInfo.ptPixelLocation.y, "\n",
+        "\tLeft          : ", contact_.rcContact.left, "\n",
+        "\tRight         : ", contact_.rcContact.right, "\n",
+        "\tTop           : ", contact_.rcContact.top, "\n",
+        "\tBotom         : ", contact_.rcContact.bottom, "\n",
+        "\tPointerFlag   : ", (
+            pointerFlags_ == PointerFlags::None       ? "None" :
+            pointerFlags_ == PointerFlags::HoverStart ? "HoverStart" :
+            pointerFlags_ == PointerFlags::HoverMove  ? "HoverMove" :
+            pointerFlags_ == PointerFlags::HoverEnd   ? "HoverEnd" :
+            pointerFlags_ == PointerFlags::TouchStart ? "TouchStart" :
+            pointerFlags_ == PointerFlags::TouchMove  ? "TouchMove" :
+            pointerFlags_ == PointerFlags::TouchEnd   ? "TouchEnd" :
+            pointerFlags_ == PointerFlags::Cancel     ? "Cancel" : "Unknown"));
 }

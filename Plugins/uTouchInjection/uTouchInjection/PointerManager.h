@@ -13,9 +13,13 @@ public:
     void Initialize(int touchNum);
     DWORD Update();
     std::shared_ptr<Pointer> GetPointer(int id);
+    void EnableLogOutput() { doesOutputLogs = true; }
+    void DisableLogOutput() { doesOutputLogs = false; }
 
 private:
-    DWORD InjectAllTouches();
+    DWORD InjectAll();
+    void InvalidateAll();
 
     std::vector<std::shared_ptr<Pointer>> pointers_;
+    bool doesOutputLogs = false;
 };

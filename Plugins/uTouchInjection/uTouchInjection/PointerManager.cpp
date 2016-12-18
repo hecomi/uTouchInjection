@@ -35,11 +35,11 @@ DWORD PointerManager::Update()
         pointer->Update();
     }
 
-    return InjectAllTouches();
+    return InjectAll();
 }
 
 
-DWORD PointerManager::InjectAllTouches()
+DWORD PointerManager::InjectAll()
 {
     std::vector<POINTER_TOUCH_INFO> contacts;
 
@@ -61,28 +61,53 @@ DWORD PointerManager::InjectAllTouches()
             case ERROR_INVALID_PARAMETER:
             {
                 Debug::Error("InjectTouchInput() => ERROR_INVALID_PARAMETER");
+                for (const auto& pointer : pointers_)
+                {
+                    if (pointer->ShouldBeUpdated()) pointer->PrintDebugInfo();
+                }
                 break;
             }
             case STATUS_ACCESS_DENIED:
             {
                 Debug::Error("InjectTouchInput() => STATUS_ACCESS_DENIED");
+                InvalidateAll();
                 break;
             }
             case ERROR_TIMEOUT:
             {
                 Debug::Error("InjectTouchInput() => ERROR_TIMEOUT");
+                InvalidateAll();
                 break;
             }
             case ERROR_NOT_READY:
             {
                 Debug::Error("InjectTouchInput() => ERROR_NOT_READY");
+                InvalidateAll();
                 break;
             }
         }
         return error;
     }
 
+    if (doesOutputLogs)
+    {
+        Debug::Log("InjectTouchInput() => OK");
+        for (const auto& pointer : pointers_)
+        {
+            if (pointer->ShouldBeUpdated()) pointer->PrintDebugInfo();
+        }
+    }
+
     return NO_ERROR;
+}
+
+
+void PointerManager::InvalidateAll()
+{
+    for (const auto& pointer : pointers_)
+    {
+        pointer->Invalidate();
+    }
 }
 
 

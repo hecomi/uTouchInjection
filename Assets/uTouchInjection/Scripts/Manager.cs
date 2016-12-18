@@ -35,13 +35,13 @@ public class Manager : MonoBehaviour
         get { return instance.pointers_; }
     }
 
-    Pointer GetPointer(int id)
+    public static Pointer GetPointer(int id)
     {
-        if (id < 0 || id >= Manager.pointers.Count) {
+        if (id < 0 || id >= pointers.Count) {
             Debug.LogErrorFormat("There is no pointer whose id is {0}.", id);
             return null;
         }
-        return pointers_[id];
+        return instance.pointers_[id];
     }
 
     void CheckInstance()

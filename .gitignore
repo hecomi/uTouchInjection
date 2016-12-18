@@ -26,5 +26,5 @@ sysinfo.txt
 # Others
 .DS_Store
 /Assets/AssetStoreTools*
-/Assets/OVR*
-/uTouchInjection.log
+/Assets/Libraries
+/*.log

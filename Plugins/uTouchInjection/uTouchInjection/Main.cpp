@@ -99,4 +99,16 @@ extern "C"
         if (!g_manager) return;
         g_manager->Update();
     }
+
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API EnableLogOutput()
+    {
+        if (!g_manager) return;
+        g_manager->EnableLogOutput();
+    }
+
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API DisableLogOutput()
+    {
+        if (!g_manager) return;
+        g_manager->DisableLogOutput();
+    }
 }
