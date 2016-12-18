@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using uTouchInjection;
 
-public class MovePointerSample : MonoBehaviour
+public class uTI_MovePointerSample : MonoBehaviour
 {
     public int frame = 0;
     public int x = 400;
