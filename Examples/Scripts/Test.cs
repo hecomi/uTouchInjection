@@ -33,7 +33,11 @@ public class Test : MonoBehaviour
         } else if (frame < 500) {
             pointer0.Release();
         } else {
+#if UNITY_EDITOR
             UnityEditor.EditorApplication.ExecuteMenuItem("Edit/Play");
+#else
+            Application.Quit();
+#endif
         }
 
         pointer0.position = new Vector2(x, y);
