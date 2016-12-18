@@ -36,7 +36,7 @@ public class uDD_TouchDispatcher : MonoBehaviour
         set; 
     }
 
-    public Vector2 filteredPos 
+    public Vector2 filteredDesktopCoord 
     { 
         get; 
         private set; 
@@ -78,20 +78,20 @@ public class uDD_TouchDispatcher : MonoBehaviour
 
         if (result.hit) {
             if (isFirstTouch_) {
-                filteredPos = result.desktopCoords;
+                filteredDesktopCoord = result.desktopCoord;
                 isFirstTouch_ = false;
             } else {
-                filteredPos += (result.desktopCoords - filteredPos) * (Time.deltaTime * 60) * (1f - filter);
+                filteredDesktopCoord += (result.desktopCoord - filteredDesktopCoord) * (Time.deltaTime * 60) * (1f - filter);
             }
         }
 
-        pointer_.position = filteredPos;
+        pointer_.position = filteredDesktopCoord;
     }
 
     void UpdateState()
     {
         if (!result.hit) {
-            ReleasePointer();
+            StartRelease();
             return;
         }
 
