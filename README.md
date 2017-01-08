@@ -25,7 +25,7 @@ Installation
 Please download the latest *.unitypackage* from the [release page](https://github.com/hecomi/uTouchInjection/releases).
 
 
-Lisence
+License
 -------
 The MIT License (MIT)
 
