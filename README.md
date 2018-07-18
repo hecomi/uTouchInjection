@@ -1,5 +1,5 @@
-uDesktopDuplication
-===================
+uTouchInjection
+===============
 
 ![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)
 
@@ -17,7 +17,7 @@ Demo
 Environment
 -----------
 - Windows 8 / 10
-- Unity 5
+- Unity 2018.2
 
 
 Installation
