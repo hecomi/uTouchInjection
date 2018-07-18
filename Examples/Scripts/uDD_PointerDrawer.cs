@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
-using State = uDD_TouchDispatcher.State;
+
+namespace uTouchInjection
+{
 
 [RequireComponent(typeof(uDD_TouchDispatcher))]
 [RequireComponent(typeof(LineRenderer))]
@@ -33,10 +35,11 @@ public class uDD_PointerDrawer : MonoBehaviour
 
     void UpdateColor()
     {
-        switch (dispatcher_.state) {
-            case State.Release : color_ = releaseColor; break;
-            case State.Hover   : color_ = hoverColor;   break;
-            case State.Touch   : color_ = touchColor;   break;
+        switch (dispatcher_.state) 
+        {
+            case uDD_TouchDispatcher.State.Release : color_ = releaseColor; break;
+            case uDD_TouchDispatcher.State.Hover   : color_ = hoverColor;   break;
+            case uDD_TouchDispatcher.State.Touch   : color_ = touchColor;   break;
         }
 
         color_.a = dispatcher_.result.hit ? hitAlpha : nonHitAlpha;
@@ -47,24 +50,30 @@ public class uDD_PointerDrawer : MonoBehaviour
     {
         line_.SetPosition(0, transform.position);
 
-        if (dispatcher_.result.hit) {
+        if (dispatcher_.result.hit) 
+        {
             line_.SetPosition(1, dispatcher_.result.position);
-        } else {
+        } 
+        else 
+        {
             line_.SetPosition(1, transform.position + transform.forward * 0.5f);
         }
 
-        line_.SetColors(color_, color_);
+        line_.startColor = color_;
+        line_.endColor = color_;
     }
 
     void UpdateCursor()
     {
         if (cursor == null) return;
 
-        if (cursorMaterial_ == null) {
+        if (cursorMaterial_ == null) 
+        {
             cursorMaterial_ = cursor.GetComponent<Renderer>().material;
         }
 
-        if (dispatcher_.state == State.Release) {
+        if (dispatcher_.state == uDD_TouchDispatcher.State.Release) 
+        {
             cursor.SetActive(false);
             return;
         }
@@ -83,4 +92,6 @@ public class uDD_PointerDrawer : MonoBehaviour
         color.a *= 0.2f;
         cursorMaterial_.SetColor("_TintColor", color);
     }
+}
+
 }

@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+namespace uTouchInjection
+{
+
 public class uDD_TouchDispatcher : MonoBehaviour
 {
     private static int currentId = 0;
@@ -96,13 +99,12 @@ public class uDD_TouchDispatcher : MonoBehaviour
         }
 
         switch (state) {
-            case State.Release: {
+            case State.Release:
                 if (OVRInput.Get(hoverInputTrigger)) {
                     StartHover();
                 }
                 break;
-            }
-            case State.Hover: {
+            case State.Hover:
                 Hover();
                 if (OVRInput.Get(touchInputTrigger)) {
                     StartTouch();
@@ -110,14 +112,12 @@ public class uDD_TouchDispatcher : MonoBehaviour
                     StartRelease();
                 }
                 break;
-            }
-            case State.Touch: {
+            case State.Touch:
                 Touch();
                 if (!OVRInput.Get(touchInputTrigger)) {
                     StartHover();
                 }
                 break;
-            }
         }
     }
 
@@ -150,4 +150,6 @@ public class uDD_TouchDispatcher : MonoBehaviour
         GetPointer();
         pointer_.Touch();
     }
+}
+
 }
