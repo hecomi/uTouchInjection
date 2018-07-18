@@ -19,7 +19,8 @@ public class Manager : MonoBehaviour
         if (instance_ != null) return instance_;
 
         var manager = FindObjectOfType<Manager>();
-        if (manager) {
+        if (manager) 
+        {
             instance_ = manager;
             return manager;
         }
@@ -37,7 +38,8 @@ public class Manager : MonoBehaviour
 
     public static Pointer GetPointer(int id)
     {
-        if (id < 0 || id >= pointers.Count) {
+        if (id < 0 || id >= pointers.Count) 
+        {
             Debug.LogErrorFormat("There is no pointer whose id is {0}.", id);
             return null;
         }
@@ -46,11 +48,13 @@ public class Manager : MonoBehaviour
 
     void CheckInstance()
     {
-        if (instance_ == this) {
+        if (instance_ == this) 
+        {
             return;
         }
 
-        if (instance_ != null && instance_ != this) {
+        if (instance_ != null && instance_ != this) 
+        {
             Destroy(gameObject);
             return;
         }
@@ -64,12 +68,13 @@ public class Manager : MonoBehaviour
 
         Lib.Initialize(touchNum);
 
-        for (int i = 0; i < touchNum; ++i) {
+        for (int i = 0; i < touchNum; ++i) 
+        {
             pointers_.Add(new Pointer(i));
         }
     }
 
-    void Update()
+    void LateUpdate()
     {
         Lib.Update();
     }
@@ -78,7 +83,6 @@ public class Manager : MonoBehaviour
     {
         Lib.Finalize();
     }
-
 }
 
 }

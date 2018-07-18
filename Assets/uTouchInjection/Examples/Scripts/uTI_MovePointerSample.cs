@@ -1,43 +1,62 @@
 ﻿using UnityEngine;
-using uTouchInjection;
+
+namespace uTouchInjection
+{
 
 public class uTI_MovePointerSample : MonoBehaviour
 {
-    public int frame = 0;
-    public int x = 400;
-    public int y = 300;
-
     Pointer pointer0;
     Pointer pointer1;
+
+    [SerializeField] int areaSize = 5;
+    [SerializeField] float t0 = 0f;
+    [SerializeField] float t1 = 2f;
+    [SerializeField] float t2 = 4f;
+    [SerializeField] float t3 = 6f;
+    [SerializeField] float t4 = 8f;
+    [SerializeField] Vector2 start0 = new Vector2(400, 300);
+    [SerializeField] Vector2 end0 = new Vector2(400, 800);
+    [SerializeField] Vector2 start1 = new Vector2(500, 300);
+    [SerializeField] Vector2 end1 = new Vector2(500, 800);
+    float t_ = 0f;
 
     void Start()
     {
         pointer0 = Manager.pointers[0];
+        pointer0.areaSize = areaSize;
         pointer1 = Manager.pointers[1];
     }
 
     void Update()
     {
-        if (frame < 100) {
-            pointer0.Release();
-            pointer1.Release();
-        } else if (frame < 200) {
-            pointer0.Hover();
-            pointer1.Hover();
-            ++x;
-        } else if (frame < 300) {
-            pointer0.Touch();
-            pointer1.Touch();
-            ++x;
-            ++y;
-        } else if (frame < 400) {
-            pointer0.Hover();
-            pointer1.Hover();
-            ++y;
-        } else if (frame < 500) {
-            pointer0.Release();
-            pointer1.Release();
-        } else {
+        if (t_ < t0) 
+        {
+            pointer0.Release(start0);
+            pointer1.Release(start1);
+        }
+        else if (t_ < t1) 
+        {
+            pointer0.Hover(start0);
+            pointer1.Hover(start1);
+        }
+        else if (t_ < t2) 
+        {
+            var a = (t_ - t1) / (t3 - t2);
+            pointer0.Touch(start0 + (end0 - start0) * a);
+            pointer1.Touch(start1 + (end1 - start1) * a);
+        } 
+        else if (t_ < t3) 
+        {
+            pointer0.Hover(end0);
+            pointer1.Hover(end1);
+        } 
+        else if (t_ < t4) 
+        {
+            pointer0.Release(end0);
+            pointer1.Release(end1);
+        }
+        else 
+        {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.ExecuteMenuItem("Edit/Play");
 #else
@@ -45,9 +64,8 @@ public class uTI_MovePointerSample : MonoBehaviour
 #endif
         }
 
-        pointer0.position = new Vector2(x, y);
-        pointer1.position = new Vector2(x + 100, y);
-
-        ++frame;
+        t_ += Time.deltaTime;
     }
+}
+
 }

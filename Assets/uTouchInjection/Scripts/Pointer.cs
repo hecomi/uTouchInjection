@@ -41,13 +41,31 @@ public class Pointer
         Lib.Release(id);
     }
 
+    public void Release(Vector2 position)
+    {
+        this.position = position;
+        Lib.Release(id);
+    }
+
     public void Hover()
     {
         Lib.Hover(id);
     }
 
+    public void Hover(Vector2 position)
+    {
+        this.position = position;
+        Lib.Hover(id);
+    }
+
     public void Touch()
     {
+        Lib.Touch(id);
+    }
+
+    public void Touch(Vector2 position)
+    {
+        this.position = position;
         Lib.Touch(id);
     }
 }
