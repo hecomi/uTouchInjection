@@ -16,16 +16,6 @@ public class Pointer
         private set;
     }
 
-    public int pressure
-    {
-        set { Lib.SetPressure(id, value); }
-    }
-
-    public int orientation
-    {
-        set { Lib.SetOrientation(id, value); }
-    }
-
     public int areaSize
     {
         set { Lib.SetAreaSize(id, value); }

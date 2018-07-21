@@ -7,7 +7,7 @@ public class uDD_TouchDispatcher : MonoBehaviour
 {
     private static int currentId = 0;
 
-    uTouchInjection.Pointer pointer_;
+    Pointer pointer_;
     bool isFirstTouch_ = true;
 
     [SerializeField] OVRInput.RawButton touchInputTrigger = OVRInput.RawButton.LIndexTrigger;
@@ -79,11 +79,15 @@ public class uDD_TouchDispatcher : MonoBehaviour
 
         if (pointer_ == null) return;
 
-        if (result.hit) {
-            if (isFirstTouch_) {
+        if (result.hit) 
+        {
+            if (isFirstTouch_) 
+            {
                 filteredDesktopCoord = result.desktopCoord;
                 isFirstTouch_ = false;
-            } else {
+            } 
+            else 
+            {
                 filteredDesktopCoord += (result.desktopCoord - filteredDesktopCoord) * (Time.deltaTime * 60) * (1f - filter);
             }
         }
@@ -93,28 +97,35 @@ public class uDD_TouchDispatcher : MonoBehaviour
 
     void UpdateState()
     {
-        if (!result.hit) {
+        if (!result.hit) 
+        {
             StartRelease();
             return;
         }
 
-        switch (state) {
+        switch (state) 
+        {
             case State.Release:
-                if (OVRInput.Get(hoverInputTrigger)) {
+                if (OVRInput.Get(hoverInputTrigger)) 
+                {
                     StartHover();
                 }
                 break;
             case State.Hover:
                 Hover();
-                if (OVRInput.Get(touchInputTrigger)) {
+                if (OVRInput.Get(touchInputTrigger)) 
+                {
                     StartTouch();
-                } else if (!OVRInput.Get(hoverInputTrigger)) {
+                } 
+                else if (!OVRInput.Get(hoverInputTrigger)) 
+                {
                     StartRelease();
                 }
                 break;
             case State.Touch:
                 Touch();
-                if (!OVRInput.Get(touchInputTrigger)) {
+                if (!OVRInput.Get(touchInputTrigger)) 
+                {
                     StartHover();
                 }
                 break;
