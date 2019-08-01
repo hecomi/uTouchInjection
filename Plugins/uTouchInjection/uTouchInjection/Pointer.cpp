@@ -116,7 +116,7 @@ void Pointer::Update()
 
     state_.Update();
 
-    if (static_cast<UINT32>(pointerFlags_) | POINTER_FLAG_UPDATE)
+    if (static_cast<UINT32>(pointerFlags_) & POINTER_FLAG_UPDATE)
     {
         lastPosition_ = contact_.pointerInfo.ptPixelLocation;
     }
