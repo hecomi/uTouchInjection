@@ -79,7 +79,6 @@ public class Manager : MonoBehaviour
         Lib.SetDebugMode(debugMode);
         Lib.SetLogFunc(onDebugLog);
         Lib.SetErrorFunc(onDebugErr);
-        Lib.EnableLogOutput();
 
         Lib.Initialize(touchNum);
 
