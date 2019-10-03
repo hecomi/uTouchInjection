@@ -8,6 +8,16 @@ public class Manager : MonoBehaviour
 {
     public int touchNum = 2;
 
+    [Tooltip("Debug mode is not applied while running.")]
+    [SerializeField] DebugMode debugMode = DebugMode.File;
+
+    public static event Lib.DebugLogDelegate onDebugLog = OnDebugLog;
+    public static event Lib.DebugLogDelegate onDebugErr = OnDebugErr;
+    [AOT.MonoPInvokeCallback(typeof(Lib.DebugLogDelegate))]
+    private static void OnDebugLog(string msg) { Debug.Log(msg); }
+    [AOT.MonoPInvokeCallback(typeof(Lib.DebugLogDelegate))]
+    private static void OnDebugErr(string msg) { Debug.LogError(msg); }
+
     private static Manager instance_;
     public static Manager instance 
     {
@@ -65,6 +75,11 @@ public class Manager : MonoBehaviour
     void Awake()
     {
         CheckInstance();
+
+        Lib.SetDebugMode(debugMode);
+        Lib.SetLogFunc(onDebugLog);
+        Lib.SetErrorFunc(onDebugErr);
+        Lib.EnableLogOutput();
 
         Lib.Initialize(touchNum);
 

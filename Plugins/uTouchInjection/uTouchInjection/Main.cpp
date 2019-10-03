@@ -14,6 +14,21 @@ namespace
 
 extern "C"
 {
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API SetDebugMode(Debug::Mode mode)
+    {
+        Debug::SetMode(mode);
+    }
+
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API SetLogFunc(Debug::DebugLogFuncPtr func)
+    {
+        Debug::SetLogFunc(func);
+    }
+
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API SetErrorFunc(Debug::DebugLogFuncPtr func)
+    {
+        Debug::SetErrorFunc(func);
+    }
+
     UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API Initialize(int touchNum)
     {
         if (g_manager) return;

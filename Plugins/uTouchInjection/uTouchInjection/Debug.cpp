@@ -20,8 +20,9 @@ void Debug::Initialize()
     if (mode_ == Mode::File)
     {
         fs_.open("uTouchInjection.log");
-        Debug::Log("Start");
     }
+
+    Debug::Log("Start");
 }
 
 
@@ -30,11 +31,13 @@ void Debug::Finalize()
     if (!isInitialized_) return;
     isInitialized_ = false;
 
+    Debug::Log("Stop");
+
     if (mode_ == Mode::File)
     {
-        Debug::Log("Stop");
         fs_.close();
     }
+
     Debug::SetLogFunc(nullptr);
     Debug::SetErrorFunc(nullptr);
 }
