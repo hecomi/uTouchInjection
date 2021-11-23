@@ -3,11 +3,11 @@
 namespace uTouchInjection
 {
 
-[RequireComponent(typeof(uDD_TouchDispatcher))]
+[RequireComponent(typeof(TouchDispatcher))]
 [RequireComponent(typeof(LineRenderer))]
-public class uDD_PointerDrawer : MonoBehaviour
+public class PointerDrawer : MonoBehaviour
 {
-    uDD_TouchDispatcher dispatcher_;
+    TouchDispatcher dispatcher_;
     LineRenderer line_;
 
     [SerializeField] GameObject cursor;
@@ -22,7 +22,7 @@ public class uDD_PointerDrawer : MonoBehaviour
 
     void Start()
     {
-        dispatcher_ = GetComponent<uDD_TouchDispatcher>();
+        dispatcher_ = GetComponent<TouchDispatcher>();
         line_ = GetComponent<LineRenderer>();
     }
 
@@ -37,9 +37,9 @@ public class uDD_PointerDrawer : MonoBehaviour
     {
         switch (dispatcher_.state) 
         {
-            case uDD_TouchDispatcher.State.Release : color_ = releaseColor; break;
-            case uDD_TouchDispatcher.State.Hover   : color_ = hoverColor;   break;
-            case uDD_TouchDispatcher.State.Touch   : color_ = touchColor;   break;
+            case TouchDispatcher.State.Release : color_ = releaseColor; break;
+            case TouchDispatcher.State.Hover   : color_ = hoverColor;   break;
+            case TouchDispatcher.State.Touch   : color_ = touchColor;   break;
         }
 
         color_.a = dispatcher_.result.hit ? hitAlpha : nonHitAlpha;
@@ -72,7 +72,7 @@ public class uDD_PointerDrawer : MonoBehaviour
             cursorMaterial_ = cursor.GetComponent<Renderer>().material;
         }
 
-        if (dispatcher_.state == uDD_TouchDispatcher.State.Release) 
+        if (dispatcher_.state == TouchDispatcher.State.Release) 
         {
             cursor.SetActive(false);
             return;

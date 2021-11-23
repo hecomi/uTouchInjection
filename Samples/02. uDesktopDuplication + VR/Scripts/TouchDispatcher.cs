@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
+using UnityEngine.XR;
 
 namespace uTouchInjection
 {
 
-public class uDD_TouchDispatcher : MonoBehaviour
+public class TouchDispatcher : MonoBehaviour
 {
     private static int currentId = 0;
 
     Pointer pointer_;
     bool isFirstTouch_ = true;
 
-    [SerializeField] OVRInput.RawButton touchInputTrigger = OVRInput.RawButton.LIndexTrigger;
-    [SerializeField] OVRInput.RawTouch hoverInputTrigger = OVRInput.RawTouch.LIndexTrigger;
+    [SerializeField] bool isLeft = true;
     [SerializeField, Range(0f, 1f)] float filter = 0.8f;
     [SerializeField] float maxRayDistance = 9999f;
 
@@ -103,32 +103,42 @@ public class uDD_TouchDispatcher : MonoBehaviour
             return;
         }
 
+        var device = InputDevices.GetDeviceAtXRNode(isLeft ? XRNode.LeftHand : XRNode.RightHand);
+        float value;
+        device.TryGetFeatureValue(CommonUsages.trigger, out value);
+
         switch (state) 
         {
             case State.Release:
-                if (OVRInput.Get(hoverInputTrigger)) 
+            {
+                if (value > 0f) 
                 {
                     StartHover();
                 }
                 break;
+            }
             case State.Hover:
+            {
                 Hover();
-                if (OVRInput.Get(touchInputTrigger)) 
+                if (value > 0.5f) 
                 {
                     StartTouch();
                 } 
-                else if (!OVRInput.Get(hoverInputTrigger)) 
+                else if (value < Mathf.Epsilon) 
                 {
                     StartRelease();
                 }
                 break;
+            }
             case State.Touch:
+            {
                 Touch();
-                if (!OVRInput.Get(touchInputTrigger)) 
+                if (value < 0.5f) 
                 {
                     StartHover();
                 }
                 break;
+            }
         }
     }
 

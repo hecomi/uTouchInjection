@@ -3,7 +3,7 @@
 namespace uTouchInjection
 {
 
-public class uTI_MovePointerSample : MonoBehaviour
+public class MovePointer : MonoBehaviour
 {
     Pointer pointer0;
     Pointer pointer1;
