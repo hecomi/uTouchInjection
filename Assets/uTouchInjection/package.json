@@ -1,0 +1,31 @@
+{
+    "name": "com.hecomi.utouchinjection",
+    "version": "1.0.0",
+    "displayName": "uTouchInjection",
+    "description": "Windows Multitouch Injection Plugin for Unity",
+    "author": {
+        "name": "hecomi",
+        "url": "https://tips.hecomi.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/hecomi/uTouchInjection"
+    },
+    "keywords": [
+        "unity",
+        "shader"
+    ],
+    "license": "MIT License",
+    "samples": [
+        {
+            "displayName": "Basic",
+            "description": "A simple example of touch events",
+            "path": "Samples~/01. Basic"
+        },
+        {
+            "displayName": "uDesktopDuplication + VR",
+            "description": "An example of control desktop screens with uDesktopDuplication in VR",
+            "path": "Samples~/02. uDesktopDuplication + VR"
+        }
+    ]
+}
