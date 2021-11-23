@@ -13,7 +13,9 @@
     },
     "keywords": [
         "unity",
-        "shader"
+        "windows",
+        "native-plugin",
+        "multi-touch"
     ],
     "license": "MIT License",
     "samples": [
