@@ -7,9 +7,11 @@ Setup
 1. Import [uDesktopDuplication](https://github.com/hecomi/uDesktopDuplication) from UPM.
 2. Import `01. Basic` sample in `uDesktopDuplication`.
 3. Import [XR Interaction Toolkit](https://docs.unity3d.com/Manual/com.unity.xr.interaction.toolkit.html) from UPM.
-4. Import `Default Input Actions` sample in `XR Interaction Toolkit`.
+4. Import `Default Input Actions` sample in `XR Interaction Toolkit` (Enable Pre-release Packages needs to be turned on).
 5. Setup Preset Manager
 6. Setup XR Plug-in Management
+
+<img src="https://raw.githubusercontent.com/wiki/hecomi/uTouchInjection/enable-pre-release-packages.png" width="720" /><br />
 
 <img src="https://raw.githubusercontent.com/wiki/hecomi/uTouchInjection/preset-manager.png" width="720" /><br />
 
